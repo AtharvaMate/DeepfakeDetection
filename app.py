@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 import tempfile
+from huggingface_hub import hf_hub_download
 from tensorflow.keras.applications.xception import preprocess_input
 YUNET_MODEL = "face_detection_yunet_2023mar.onnx"
 
@@ -10,16 +11,19 @@ face_detector = cv2.FaceDetectorYN.create(
     YUNET_MODEL,
     "",
     (320, 320),
-    score_threshold=0.9,     # 🔥 HIGH threshold → fewer false positives
+    score_threshold=0.9,
     nms_threshold=0.3,
-    top_k=1                 # 🔥 only most confident face
+    top_k=1
 )
 
 
 
 IMG_SIZE = 224
 NUM_FRAMES = 16
-MODEL_PATH = "dfd_model.keras"
+MODEL_PATH = hf_hub_download(
+        repo_id="AtharvaMate/dfd_model",
+        filename="dfd_model.keras"
+    )
 
 FAKE_THRESHOLD = 0.6
 CONF_THRESHOLD = 70
@@ -48,7 +52,6 @@ def preprocess_frame(frame):
 def crop_face(frame):
     h, w, _ = frame.shape
 
-    # YuNet expects BGR
     bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
     face_detector.setInputSize((w, h))
@@ -57,11 +60,9 @@ def crop_face(frame):
     if faces is None or len(faces) == 0:
         return None
 
-    # faces: [x, y, w, h, score, landmarks...]
     face = faces[0]
     x, y, fw, fh = map(int, face[:4])
 
-    # Add margin
     margin = 0.25
     x1 = max(0, int(x - margin * fw))
     y1 = max(0, int(y - margin * fh))
