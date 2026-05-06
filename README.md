@@ -190,18 +190,6 @@ huggingface_hub
 
 ---
 
-# 📸 Application Preview
-
-<div align="center">
-
-| Upload Interface | Detection Result |
-|---|---|
-| ![Upload](https://placehold.co/600x300/png?text=Upload+Video+UI) | ![Result](https://placehold.co/600x300/png?text=Detection+Result) |
-
-</div>
-
----
-
 # 🧠 Core Algorithms Used
 
 ## 👤 Face Detection
